@@ -4,6 +4,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   TouchableOpacity,
+  LayoutAnimation,
 } from 'react-native';
 import React, {Component} from 'react';
 import Modal from 'react-native-modal';
@@ -18,17 +19,22 @@ import {
 } from '../../utility/responsive';
 import theme from '../../utility/theme';
 import InputBox from '../../components/InputBox';
-
+import ToggleSwitch from 'toggle-switch-react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Formik} from 'formik';
 import {CommonButton} from '../../components/commonComp';
 import NavigationBar from '../../navigation/navHeader';
 import {Image} from 'react-native-elements/dist/image/Image';
 import {VectorIcon} from '../../components/VectorIcon';
+import {StyleSheet} from 'react-native';
+import {Button, IconButton} from 'react-native-paper';
 export class AddProduct extends Component {
   constructor(props) {
     super(props);
     this.state = {
       modalVisible: true,
+      inStock: true,
+      imageArray: [],
     };
     // this.props.navigation.setOptions(
     //   NavigationBar({
@@ -39,6 +45,44 @@ export class AddProduct extends Component {
     //     }},
     //   }),)
   }
+
+  openGallery = async () => {
+    let options = {
+      storageOption: {
+        path: 'images',
+        mediaType: 'photo',
+      },
+      selectionLimit: 10,
+    };
+
+    let imageUriDetails = await launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        //.log("User cancelled image picker");
+      } else if (response.error) {
+        //.log("ImagePicker Error", response.error);
+      } else if (response.customButtom) {
+        //.log("User tapped custom Button", response.customButtom);
+      } else {
+        let Imagedata = [...this.state.imageArray];
+        response.assets.map((item, index) => {
+          let imgObj = {
+            uri: item.uri,
+            type: item.type,
+            name: item.fileName,
+          };
+          Imagedata.push(imgObj);
+        });
+        this.setState({imageArray: Imagedata});
+      }
+    });
+  };
+  removeImg = index => {
+    const newArray = [...this.state.imageArray]; // Create a copy of the array
+    newArray.splice(index, 1); // Remove the element at the specified index
+    this.setState({imageArray: newArray}); // Update the state with the modified array
+
+    LayoutAnimation.linear();
+  };
   componentDidMount() {}
   render() {
     const authState = store.getState();
@@ -56,20 +100,11 @@ export class AddProduct extends Component {
           style={{
             flex: 1,
             backgroundColor: 'white',
-            // backgroundColor: 'red',
             padding: 10,
           }}>
-          <Text
-            style={{
-              fontFamily: theme.font.bold,
-              fontWeight: 'bold',
-            }}>
-            Add Product
-          </Text>
-
           <Formik
             initialValues={{
-              email: 'ramesh@gmail.com',
+              productName: '',
               password: '12345',
             }}
             onSubmit={() => {}}>
@@ -88,13 +123,9 @@ export class AddProduct extends Component {
             }) => (
               <>
                 <ScrollView
+                  showsVerticalScrollIndicator={false}
                   bounces={false}
-                  style={
-                    {
-                      // paddingHorizontal:"3%8
-                      // flex: 1,
-                    }
-                  }>
+                  style={{}}>
                   <View
                     style={{
                       width: '100%',
@@ -103,102 +134,216 @@ export class AddProduct extends Component {
                     }}>
                     <View
                       style={{
-                        width: '100%',
-                        // padding:"4%",
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        minHeightheight: getResHeight(210),
-                        // justifyContent: 'center',
-                        // alignItems: 'center',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '5%',
                       }}>
-                      {/* <TouchableOpacity style={{
-                        justifyContent:"center",
-                        alignItems: 'center'
-                      }}>
-                        <VectorIcon
-                          type={'MaterialIcons'}
-                          name={'cloud-upload'}
-                          size={getFontSize(45)}
-                          color={'black'}
-                        />
-                        <Text style={{
-                          fontSize: getFontSize(15),
+                      <Text
+                        style={{
                           fontFamily: theme.font.bold,
-                          color:"#000000"
-                        }}>Click here to upload</Text>
-                      </TouchableOpacity> */}
-
-                      <View style={{
-                        flexDirection:"row",
-                        flexWrap:"wrap",
-                        alignItems:"center",
-                        justifyContent:"center",
-                      }}>
-                        {[1, 1, 1, 1, 1, 1, 1, 1,1].map((item, index) => {
-                          return (
-                            <>
-                              <View style={{
-                                margin:"2%"
-                              }}>
-                                <Image
-                                  source={{
-                                    uri: 'https://www.shutterstock.com/search/product',
-                                  }}
-                                  style={{
-                                    height: getResHeight(80),
-                                    width: getResWidth(80),
-                                    borderRadius: 5,
-                                  }}
-                                />
-
-                                <TouchableOpacity
-                                  style={
-                                    {
-                                      // justifyContent: 'center',
-                                      // alignItems: 'center',
-                                      position: 'absolute',
-                                      right: 0,
-                                      top: 0,
-                                    }
-                                  }>
-                                  <VectorIcon
-                                    type={'Ionicons'}
-                                    name={'md-close-circle'}
-                                    size={getFontSize(25)}
-                                    color={'black'}
-                                  />
-                                </TouchableOpacity>
-                              </View>
-                            </>
-                          );
-                        })}
-                      </View>
+                          fontWeight: 'bold',
+                        }}>
+                        Add Product
+                      </Text>
+                      {this.state.imageArray.length !== 0 && (
+                        <>
+                          <View
+                            style={{
+                              height: 37,
+                              width: 37,
+                              backgroundColor: '#1B1D43',
+                              borderRadius: 100,
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <IconButton
+                              style={{}}
+                              icon="plus"
+                              iconColor={theme.color.accent}
+                              size={getFontSize(25)}
+                              onPress={() => this.openGallery()}
+                            />
+                          </View>
+                        </>
+                      )}
                     </View>
-                    <InputBox
-                      multiline
-                      label={'Product Name'}
-                      placeholder={'Enter product name'}
-                      value={values.productName}
-                      errorText={errors.productName}
-                      onChangeText={handleChange('productName')}
-                      onFocus={() => setFieldTouched('productName')}
-                      onBlur={() => handleBlur('productName')}
+                    <View
+                      style={{
+                        width: '100%',
+                        borderWidth: 1,
+                        borderStyle:"dashed",
+                        borderColor: theme.color.primary,
+                        borderRadius: 10,
+                        minHeight: getResHeight(210),
+                        alignItems:
+                          this.state.imageArray.length !== 0
+                            ? 'flex-start'
+                            : 'center',
+                        justifyContent:
+                          this.state.imageArray.length !== 0
+                            ? 'flex-start'
+                            : 'center',
+                      }}>
+                      {this.state.imageArray.length == 0 && (
+                        <>
+                          <TouchableOpacity
+                            onPress={() => this.openGallery()}
+                            style={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}>
+                            <VectorIcon
+                              type={'MaterialIcons'}
+                              name={'cloud-upload'}
+                              size={getFontSize(45)}
+                              color={theme.color.primary}
+                            />
+                            <Text
+                              style={{
+                                fontSize: getFontSize(12),
+                                fontFamily: theme.font.bold,
+                                color: theme.color.primary,
+                              }}>
+                              Click here to upload
+                            </Text>
+                          </TouchableOpacity>
+                        </>
+                      )}
+                      {this.state.imageArray.length !== 0 && (
+                        <>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              flexWrap: 'wrap',
+                              alignItems:
+                                this.state.imageArray.length !== 0
+                                  ? 'flex-start'
+                                  : 'center',
+                              justifyContent:
+                                this.state.imageArray.length !== 0
+                                  ? 'flex-start'
+                                  : 'center',
+                            }}>
+                            {this.state.imageArray.length !== 0 &&
+                              this.state.imageArray.map((item, index) => {
+                                return (
+                                  <>
+                                    <View
+                                      style={{
+                                        margin: '2%',
+                                      }}>
+                                      <Image
+                                        source={{
+                                          uri: `${item.uri}`,
+                                        }}
+                                        style={{
+                                          height: getResHeight(80),
+                                          width: getResWidth(80),
+                                          borderRadius: 5,
+                                        }}
+                                      />
+
+                                      <TouchableOpacity
+                                        onPress={() => {
+                                          LayoutAnimation.linear();
+                                          this.removeImg(index);
+                                        }}
+                                        style={{
+                                          position: 'absolute',
+                                          right: 0,
+                                          top: 0,
+                                        }}>
+                                        <VectorIcon
+                                          type={'Ionicons'}
+                                          name={'md-close-circle'}
+                                          size={getFontSize(25)}
+                                          color={theme.color.primary}
+                                        />
+                                      </TouchableOpacity>
+                                    </View>
+                                  </>
+                                );
+                              })}
+                          </View>
+                        </>
+                      )}
+                    </View>
+                    <View style={styles.inputContainer}>
+                      <InputBox
+                        lable={'Product Name'}
+                        placeholder={'Enter product name'}
+                        value={values.productName}
+                        errorText={errors.productName}
+                        onChangeText={text =>
+                          setFieldValue(
+                            'productName',
+                            text.replace(
+                              /[`~!#$%^&*()_|+\-=?;:'",<>\{\}\[\]\\\/]/gi,
+                              '',
+                            ),
+                          )
+                        }
+                        onFocus={() => setFieldTouched('productName')}
+                        onBlur={() => handleBlur('productName')}
+                      />
+                    </View>
+                      <View style={styles.inputContainer}>
+                    <ToggleSwitch
+                      isOn={this.state.inStock}
+                      onColor={theme.color.primary}
+                      offColor="red"
+                      label="In stock"
+                      labelStyle={{
+                        fontSize: getFontSize(18),
+                        color: theme.color.lableColor,
+                        fontFamily: theme.font.semiBold,
+                      }}
+                      size="medium"
+                      onToggle={isOn =>
+                        this.setState({inStock: !this.state.inStock})
+                      }
                     />
-                    <InputBox
-                      multiline
-                      label={'Product Description'}
-                      placeholder={'Enter product description'}
-                      value={values.productDescription}
-                      errorText={errors.productDescription}
-                      onChangeText={handleChange('productDescription}')}
-                      onFocus={() => setFieldTouched('productDescription}')}
-                      onBlur={() => handleBlur('productDescription}')}
-                    />
+                    </View>
+                    <View style={styles.inputContainer}>
+                      <InputBox
+                        lable={'Product Price'}
+                        placeholder={'₹ Enter product price'}
+                        value={values.productPrice}
+                        errorText={errors.productPrice}
+                        keyboardType={'numeric'}
+                        onChangeText={text =>
+                          setFieldValue(
+                            'productPrice',
+                            text.replace(
+                              /[`~!#$%^&*()_|+\-=?;: A-Za-z'",<>\{\}\[\]\\\/]/gi,
+                              '',
+                            ),
+                          )
+                        }
+                        onFocus={() => setFieldTouched('productPrice')}
+                        onBlur={() => handleBlur('productPrice')}
+                      />
+                    </View>
+                    <View style={styles.inputContainer}>
+                      <InputBox
+                        multiline
+                        lable={'Product Description'}
+                        placeholder={'Enter product description'}
+                        value={values.productDescription}
+                        errorText={errors.productDescription}
+                        onChangeText={text =>
+                          setFieldValue('productDescription', text)
+                        }
+                        onFocus={() => setFieldTouched('productDescription}')}
+                        onBlur={() => handleBlur('productDescription}')}
+                      />
+                    </View>
                   </View>
                 </ScrollView>
                 <View style={{}}>
                   <CommonButton
-                    title="Login"
+                    title="Add"
                     onPress={() => {}}
                     isLoading={this.state.isLoading}
                     containerStyle={{
@@ -214,5 +359,9 @@ export class AddProduct extends Component {
     );
   }
 }
-
+const styles = StyleSheet.create({
+  inputContainer: {
+    marginTop: '2.5%',
+  },
+});
 export default AddProduct;

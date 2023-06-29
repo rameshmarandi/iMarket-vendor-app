@@ -46,11 +46,14 @@ const color = {
 };
 
 const font = {
-  regular: 'Arial-Lgt',
-  semiBold: 'Helvetica',
-  bold: 'Helvetica-Bold',
-  Helvetica: 'Helvetica',
-  ArialLgt: 'Arial-Lgt',
+  regular: 'Poppins Regular 400',
+  semiBold: 'Poppins SemiBold 600',
+  medium:"Poppins Medium 500",
+  bold: 'Poppins Bold 700',
+  boldItalic : 'Poppins Bold Italic 700',
+  light :"Poppins Light 300",
+  lightItalic :"Poppins Light Italic 300",
+  thin :"Poppins Thin 250"
 };
 
 const fontSizes = {

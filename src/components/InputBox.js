@@ -72,6 +72,7 @@ function InputBox(props) {
     outlineColor,
     activeOutlineColor,
     value,
+    lable,
     label,
     labelStyle,
     placeholder,
@@ -148,13 +149,14 @@ function InputBox(props) {
     if (styleObj.maxHeight) {
       maxHeight = styleObj.maxHeight;
     }
-    // if (multiline) {
-    //   return {
-    //     width,
-    //     minHeight: getResHeight(10),
-    //     // maxHeight,
-    //   };
-    // }
+    if (multiline) {
+      return {
+        width,
+        minHeight: getResHeight(150),
+        maxHeight: getResHeight(250),
+        // maxHeight,
+      };
+    }
     return {
       width,
       height,
@@ -198,9 +200,8 @@ function InputBox(props) {
       let obj = arrayObjtoObj(props.style);
       let textStyle = {
         color: disabled ? theme.color.placeholder : theme.color.primary,
-        fontFamily: theme.font.ArialLgt,
+        fontFamily: theme.font.medium,
         fontSize: getFontSize(12),
-        fontWeight: '400',
       };
       if (obj.fontFamily) {
         textStyle.fontFamily = obj.fontFamily;
@@ -239,9 +240,9 @@ function InputBox(props) {
 
   const InputLable = () => {
     if (mode == 'lable') {
-      return '';
+      return lable;
     }
-    return label;
+    return lable;
   };
   const dropdownData = () => {
     if (showYearPicker) {
@@ -341,12 +342,11 @@ function InputBox(props) {
             style={[
               {
                 alignSelf: 'center',
-                // borderStyle:'dashed',
-                // borderWidth: 1.5,
                 borderColor: disabled ? '#EDEDED' : 'lightgray',
                 marginTop: hp(0.6),
                 borderRadius: getResWidth(1),
                 paddingHorizontal: getResWidth(5),
+
               },
               {
                 paddingLeft: getResWidth(8),
@@ -410,48 +410,16 @@ function InputBox(props) {
           placeholder={placeholder}
           value={value}
           onKeyPress={onKeyPress}
-          onChangeText={t => {
-            let txt = t;
-            if (typeof onChangeText === 'function') {
-              if (disableSpace) {
-                txt = removeSpace(txt);
-              }
-              onChangeText(txt);
-              // if(typeof onChangeText === 'function' && "mail"){
-              //   onChangeText(txt.toLowerCase())
-              // }else{
-
-              //   onChangeText(txt);
-              // }
-            }
-            if (countrycodeDropdown && typeof isValidNumber === 'function') {
-              const checkValid = pref.current?.isValidNumber(txt);
-              isValidNumber(checkValid);
-            }
-          }}
-          // onFocus={() => {
-          //   setInFocused(true);
-          //   if (typeof onFocus === 'function') onFocus();
-          // }}
-          // onBlur={() => {
-          //   setInFocused(false);
-          //   if (typeof secureTextEntry == 'boolean' && secureTextEntry) {
-          //     setShowText(true);
-          //   }
-          //   if (typeof onBlur === 'function') onBlur();
-          // }}
-          // onPressIn={() => {
-          //   if (typeof onPressIn === 'function') {
-          //     onPressIn();
-          //   }
-          // }}
+          onChangeText={onChangeText}        
           onPressOut={() => {
             if (typeof onPressOut == 'function') {
               onPressOut();
             }
           }}
+          cursorColor={theme.color.primary}
           // activeUnderlineColor={theme.color.primary}
           underlineColor={theme.color.placeholder}
+          numberOfLines={10}
           left={
             letfIcon && (
               <TextInput.Icon
@@ -612,16 +580,24 @@ function InputBox(props) {
             }
           }}
           selectionColor={theme.color.primary}
+        
           style={[
             InputMode() == 'flat' && {
               backgroundColor: '#f4f5f6',
               borderBottomWidth: 0,
             },
-            style,
+            // style,
             // getContentSize(),
             getTextStyle(),
             multiline && {
               textAlignVertical: 'top',
+              height: '100%',
+              minHeight: getResHeight(70),
+              maxHeight: getResHeight(250),
+              lineHeight: 24,
+              fontSize: getFontSize(15),
+              fontFamily: theme.font.regular,
+              paddingTop:"5%",
             },
             countrycodeDropdown && {
               zIndex: 100,
@@ -631,7 +607,10 @@ function InputBox(props) {
               marginTop: 0,
             },
             {
-              paddingHorizontal: '2%',
+                fontSize: getFontSize(15),
+              fontFamily: theme.font.bold,
+              paddingHorizontal: '1.5%',
+
             },
           ]}
           {...this.props}

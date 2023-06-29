@@ -47,7 +47,7 @@ function AnimatedSlash() {
       <Text style={{
         fontSize:getFontSize(25),
         color:"white",
-        fontWeight:"bold",
+        fontFamily: theme.font.semiBold,
         textAlign: "center"
       }}>iMarket{'\n'}Vendor App</Text>
       </Animated.View>

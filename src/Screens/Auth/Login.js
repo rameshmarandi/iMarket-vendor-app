@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, ScrollView, Platform} from 'react-native';
-import PropTypes from 'prop-types';
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Platform,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {SafeAreaView} from 'react-native';
 import theme from '../../utility/theme';
-import {Image} from 'react-native';
 import assets from '../../utility/theme/assets';
 import {
   hp,
@@ -19,10 +24,14 @@ import InputBox from '../../components/InputBox';
 
 import {Formik} from 'formik';
 import {KeyboardAvoidingView} from 'react-native';
-import {BannerHeader, CommonAlertModal, CommonButton} from '../../components/commonComp';
+import {
+  BannerHeader,
+  CommonAlertModal,
+  CommonButton,
+} from '../../components/commonComp';
 import LoginWithGoggle from '../../components/LoginWithGoggle';
 import NavigationBar from '../../navigation/navHeader';
-import {HyperText, HyperTxt} from '../../components/commonHelper';
+import {HyperTxt} from '../../components/commonHelper';
 import {LoginAPI} from '../../apis/authRepo';
 
 class Login extends Component {
@@ -30,8 +39,8 @@ class Login extends Component {
     super(props);
     this.state = {
       showPassword: false,
-      alertModal:false,
-      alerText:""
+      alertModal: false,
+      alerText: '',
     };
   }
   componentDidMount() {
@@ -61,7 +70,7 @@ class Login extends Component {
           style={{
             flex: 1,
           }}>
-            <CommonAlertModal
+          <CommonAlertModal
             isVisible={this.state.alertModal}
             alertTitle={this.state.alerText}
             removeBtn
@@ -95,10 +104,10 @@ class Login extends Component {
             <Formik
               validationSchema={theme.validationSchema.login}
               initialValues={{
-                email: 'ramesh@gmail.com',
-                password: '12345',
+                email: '',
+                password: '',
               }}
-              onSubmit={() => {}}>
+              onSubmit={async () => {}}>
               {({
                 values,
                 isValid,
@@ -118,9 +127,7 @@ class Login extends Component {
                     flex: 1,
                   }}>
                   <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    // style={{flex:1}}
-                  >
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                     <View
                       style={{
                         width: '90%',
@@ -132,7 +139,7 @@ class Login extends Component {
                         placeholder={'Enter Email'}
                         value={values.email}
                         errorText={errors.email}
-                        onChangeText={handleChange('email')}
+                        onChangeText={text => setFieldValue('email', text)}
                         onFocus={() => setFieldTouched('email')}
                         onBlur={() => handleBlur('email')}
                       />
@@ -140,16 +147,16 @@ class Login extends Component {
                         secureTextEntry={true}
                         label={'Password'}
                         placeholder={'Enter Password'}
-                        value={values.password}
+                        value={values.password} 
                         errorText={errors.password}
                         onPress={showPassword => {
-                          console.log('password');
                           this.setState({
                             showPassword: !this.state.showPassword,
                           });
                         }}
                         showEye={true}
-                        onChangeText={handleChange('password')}
+                        onChangeText={text => {
+                          setFieldValue('password', text)}}
                         onFocus={() => setFieldTouched('password')}
                         onBlur={() => handleBlur('password')}
                       />
@@ -162,9 +169,8 @@ class Login extends Component {
                         <Text
                           style={{
                             color: '#2F3B75',
-                            fontFamily: theme.font.regular,
+                            fontFamily: theme.font.medium,
                             fontSize: getFontSize(14),
-                            fontWeight: '400',
                           }}
                           onPress={() => {
                             this.props.navigation.navigate('ForgotPassword');
@@ -176,22 +182,18 @@ class Login extends Component {
                       <CommonButton
                         title="Login"
                         // disabled={!(dirty && isValid)}
-                        // onPress={async () => {
-                        //   this.setState({isLoading: true}, async () => {
-                        //   const res=  await this.props.LoginAPI(values);
-                        //   if (res.payload == 200) {
-                        //       alert('Nice to see you back');
-                        //       // this.props.navigation.navigate('Login');
-                        //     } else {                              
-                        //       this.setState({alerText: res.payload.message});
-                        //       this.setState({alertModal: true});
-                        //     }
-                        //     this.setState({isLoading: false});
-                        //   });
-                        // }}
-                        onPress={()=>{
+                        onPress={async () => {
+                          this.setState({isLoading: true}, async () => {
+                            const res = await this.props.LoginAPI(values);
+                            if (res.payload == 200) {
+                              alert('Nice to see you back');
                               this.props.navigation.navigate('TabNav');
-                          
+                            } else {
+                              this.setState({alerText: res.payload.message});
+                              this.setState({alertModal: true});
+                            }
+                            this.setState({isLoading: false});
+                          });
                         }}
                         isLoading={this.state.isLoading}
                         containerStyle={{

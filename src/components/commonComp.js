@@ -58,7 +58,7 @@ export const CommonButton = props => {
       titleStyle={[
         {
           color: theme.color.accent,
-          fontSize: getFontSize(16),
+          fontSize: getFontSize(14),
           fontFamily: theme.font.semiBold,
           fontWeight: 600,
         },
@@ -204,9 +204,8 @@ export function BannerHeader(props) {
         <Text
           style={[
             {
-              fontFamily: theme.font.bold,
-              fontSize: getFontSize(28),
-              fontWeight: '700',
+              fontFamily: theme.font.semiBold,
+              fontSize: getFontSize(25),            
               color: 'white',
             },
             titleStyle,
@@ -219,9 +218,8 @@ export function BannerHeader(props) {
               style={[
                 {
                   color: '#C0C0C0',
-                  fontFamily: theme.font.regular,
+                  fontFamily: theme.font.medium,
                   fontSize: getFontSize(12),
-                  fontWeight: '400',
                   marginTop: hp(1),
                 },
                 subTitleStyle,

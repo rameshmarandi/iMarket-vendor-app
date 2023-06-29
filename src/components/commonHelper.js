@@ -54,9 +54,8 @@ const HyperTxt = props => {
       style={[
         {
           color: theme.color.black,
-          fontFamily: theme.font.regular,
+          fontFamily: theme.font.medium,
           fontSize: getFontSize(14),
-          fontWeight: '400',
         },
         style,
       ]}>
@@ -73,9 +72,8 @@ const HyperTxt = props => {
               style={[
                 {
                   color: theme.color.primary,
-                  fontFamily: theme.font.Helvetica,
+                  fontFamily: theme.font.semiBold,
                   fontSize: getFontSize(13),
-                  fontWeight: '700',
                 },
                 hypertxtUnderline && {
                   textDecorationLine: 'underline',
