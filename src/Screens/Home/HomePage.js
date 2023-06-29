@@ -24,35 +24,49 @@ import theme from '../../utility/theme';
 import {SearchBar} from 'react-native-elements';
 import assets from '../../utility/theme/assets';
 import NavigationBar from '../../navigation/navHeader';
+import {GetProductAPI} from '../../apis/productRepo';
 
 class HomePage extends Component {
   constructor(props) {
     super(props);
+
     this.props.navigation.setOptions(
       NavigationBar({
         navigation: props.navigation,
         logoProps: {type: 'primary'},
-        notificationProps: {onPress: () => {
-          this.props.navigation.navigate("Notification")
-        }},
+        notificationProps: {
+          onPress: () => {
+            this.props.navigation.navigate('Notification');
+          },
+        },
       }),
     );
     this.state = {};
   }
-
-  render(){
-    return(<>
-    
-    <View style={{
-      flex:1,
-      // backgroundColor:"red"
-    }}></View>
-    </>)
+  async componentDidMount() { 
+     await this.props.GetProductAPI();
+    const {navigation} = this.props;
+    this.focusListener = navigation.addListener('didFocus', async () => {
+      await this.props.GetProductAPI();
+    });
+  }
+  render() {
+    return (
+      <>
+        <View
+          style={{
+            flex: 1,
+            // backgroundColor:"red"
+          }}></View>
+      </>
+    );
   }
 }
 
 const mapStateToProps = state => ({});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  GetProductAPI: payload => dispatch(GetProductAPI(payload)),
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

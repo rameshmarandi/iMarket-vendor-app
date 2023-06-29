@@ -137,6 +137,7 @@ class Login extends Component {
                       <InputBox
                         label={'Email'}
                         placeholder={'Enter Email'}
+                        keyboardType={"email-address"}
                         value={values.email}
                         errorText={errors.email}
                         onChangeText={text => setFieldValue('email', text)}

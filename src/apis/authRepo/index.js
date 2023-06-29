@@ -52,7 +52,7 @@ export const LoginAPI = createAsyncThunk(
           //invalid crads check
           else if (
             snapShot.docs !== [] &&
-           atob(`${snapShot.docs[0].data().password}`) // descript the password
+           atob(`${snapShot.docs[0].data().password}`) // decript the password
              !== payload.password
           ) {
             statusCode = StatusCodeManager(401);

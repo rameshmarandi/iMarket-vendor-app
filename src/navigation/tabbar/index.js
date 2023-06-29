@@ -157,6 +157,7 @@ function TabBarRender({navigation, item, index, activeTab}) {
           <AddProduct
           isModalVisible={productModal}
           onRequestClose={onRequestClose}
+          onCloseModal = {()=>onRequestClose()}
           />
         </>
       ) : (

@@ -6,6 +6,10 @@ const auth = {
   vendors: 'vendors',
 };
 
+const product = {
+  products:"products"
+}
 export default ApiName = {
   ...auth,
+  ...product
 };

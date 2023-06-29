@@ -28,13 +28,16 @@ import {Image} from 'react-native-elements/dist/image/Image';
 import {VectorIcon} from '../../components/VectorIcon';
 import {StyleSheet} from 'react-native';
 import {Button, IconButton} from 'react-native-paper';
-export class AddProduct extends Component {
+import { AddProductAPI, GetProductAPI } from '../../apis/productRepo';
+import { connect } from 'react-redux';
+class AddProduct extends Component {
   constructor(props) {
     super(props);
     this.state = {
       modalVisible: true,
       inStock: true,
       imageArray: [],
+      isLoading :false
     };
     // this.props.navigation.setOptions(
     //   NavigationBar({
@@ -91,11 +94,13 @@ export class AddProduct extends Component {
       <Modal
         isVisible={this.props.isModalVisible}
         onBackButtonPress={this.props.onRequestClose}
-        deviceWidth={SCREENWIDTH}
-        deviceHeight={SCREENHEIGHT}
+        // deviceWidth={SCREENWIDTH}
+        // deviceHeight={SCREENHEIGHT}
+        animationInTiming={1000}
+        animationOutTiming={500}
         style={{flex: 1, margin: 0}}
         coverScreen={true}
-        backdropOpacity={0.7}>
+        backdropOpacity={0.8}>
         <View
           style={{
             flex: 1,
@@ -104,8 +109,11 @@ export class AddProduct extends Component {
           }}>
           <Formik
             initialValues={{
-              productName: '',
-              password: '12345',
+            productName :"",
+            productDescription:"",
+            productPrice:"",
+            productImages: '',
+            inStock: this.state.inStock
             }}
             onSubmit={() => {}}>
             {({
@@ -141,8 +149,9 @@ export class AddProduct extends Component {
                       }}>
                       <Text
                         style={{
-                          fontFamily: theme.font.bold,
-                          fontWeight: 'bold',
+                          fontFamily: theme.font.medium,
+                          color: theme.color.placeholder,
+                          
                         }}>
                         Add Product
                       </Text>
@@ -344,7 +353,19 @@ export class AddProduct extends Component {
                 <View style={{}}>
                   <CommonButton
                     title="Add"
-                    onPress={() => {}}
+                    onPress={async() => {
+                      this.setState({isLoading : true}, async()=>{
+                        values.productImages = this.state.imageArray
+                        const res = await this.props.AddProductAPI(values)
+                        
+                          await this.props.GetProductAPI()
+                        if(res.payload ==200){
+                          alert("Product added successfully");
+                          this.props.onCloseModal()
+                        }
+                        this.setState({isLoading: false})
+                      })
+                    }}
                     isLoading={this.state.isLoading}
                     containerStyle={{
                       marginTop: getResHeight(20),
@@ -359,9 +380,21 @@ export class AddProduct extends Component {
     );
   }
 }
+const mapStateToProps = (props, state) => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    AddProductAPI: payload => dispatch(AddProductAPI(payload)),
+    GetProductAPI: payload => dispatch(GetProductAPI(payload)),
+  };
+};
 const styles = StyleSheet.create({
   inputContainer: {
     marginTop: '2.5%',
   },
 });
-export default AddProduct;
+export default connect(mapStateToProps, mapDispatchToProps)(AddProduct);
+
+
